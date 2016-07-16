@@ -1,0 +1,7 @@
+*.dat
+*.txt
+*.p
+data/
+log/
+.idea/
+*.pyc

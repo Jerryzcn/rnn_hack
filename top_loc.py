@@ -1,8 +1,8 @@
 import pandas as pd
 import pickle
+from config import *
 
-# 1-index based
-LOCATION_ID_MAX =265
+
 def getTopLoc():
     '''
     :return: data sorted by time
@@ -26,13 +26,14 @@ def getTopLoc():
     candidates = []
     for i in range(len(count)):
         _t += count[i][1]
-        if float(_t)/_sum > 0.9:
+        if float(_t)/_sum > 0.5:
             break
         candidates.append(count[i][0])
-        print('{} {}'.format(count[i][0],float(_t)/_sum))
+        print('{} {} {}'.format(count[i][0], count[i][1], float(_t)/_sum))
 
     return candidates
 
 candidates = getTopLoc()
+print(len(candidates))
 print(float(len(candidates))/LOCATION_ID_MAX)
 pickle.dump(candidates, open('./data/top_loc.dat','wb'))
