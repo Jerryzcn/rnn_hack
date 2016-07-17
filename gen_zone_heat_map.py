@@ -90,6 +90,7 @@ class Uber_figure(tk.Frame):
         self.l1.image = img2
         #self.l1 = tk.Label(self, image=ImageTk.PhotoImage(image))
         self.l2 = tk.Label(self, text="", width=40)
+
         self.l1.pack(side = "bottom", fill = "both", expand = "yes")
         self.l2.pack(side="top", fill="y")
         
@@ -117,46 +118,48 @@ def gen_heat_map(m, pickups):
     norm = Normalize()
 
     # dateIndex, go over all the predicted lines
-    #for dateIndex in xrange(len(pickups)):
-    dateIndex = 0
-    pickups_count = pickups[dateIndex][2:]
+    for dateIndex in xrange(len(pickups)):
+        pickups_count = pickups[dateIndex][2:]
 
-    for i in xrange(len(pickups_count) - 2):
-        index = i + 1
-        if index in LOCATIONID_MAP.keys():
-            pickup_map[LOCATIONID_MAP[index]] += pickups_count[i]
-        else:
-            pickup_map[index] = pickups_count[i]
+        for i in xrange(len(pickups_count) - 2):
+            index = i + 1
+            if index in LOCATIONID_MAP.keys():
+                pickup_map[LOCATIONID_MAP[index]] += pickups_count[i]
+            else:
+                pickup_map[index] = pickups_count[i]
 
-    for i in xrange(len(m.nyc_info)):
-        index = m.nyc_info[i]['LocationID']
-        if index in LOCATIONID_MAP.keys():
-            color_map[i] = pickup_map[LOCATIONID_MAP[index]]
-        else:
-            color_map[i] = pickup_map[index]
+        for i in xrange(len(m.nyc_info)):
+            index = m.nyc_info[i]['LocationID']
+            if index in LOCATIONID_MAP.keys():
+                color_map[i] = pickup_map[LOCATIONID_MAP[index]]
+            else:
+                color_map[i] = pickup_map[index]
 
-    ax = fig.add_subplot(111, frame_on=False, xticks=[], yticks=[])
-    df_map['patches'] = [PolygonPatch(x, fc='white', ec='grey', lw=.25, alpha=1.0,
-                                      zorder=4) for x in df_map['poly']]
-    pc = PatchCollection(df_map['patches'].values, match_original=True)
-    pc.set_facecolor(cmap(norm(color_map)))
-    ax.add_collection(pc)
-    min_x, min_y = m(lower_left[0], lower_left[1])
-    max_x, max_y = m(upper_right[0], upper_right[1])
-    ax.set_xlim(min_x, max_x)
-    ax.set_ylim(min_y, max_y)
-    ax.set_aspect(1)
-    plt.tight_layout()
-    fig.set_size_inches(16.76, 16.88)
-    plt.show()
+        ax = fig.add_subplot(111, frame_on=False, xticks=[], yticks=[])
+        ax.set_title("Prediction")
+        df_map['patches'] = [PolygonPatch(x, fc='white', ec='grey', lw=.25, alpha=1.0,
+                                          zorder=4) for x in df_map['poly']]
+        pc = PatchCollection(df_map['patches'].values, match_original=True)
+        pc.set_facecolor(cmap(norm(color_map)))
+        ax.add_collection(pc)
+        min_x, min_y = m(lower_left[0], lower_left[1])
+        max_x, max_y = m(upper_right[0], upper_right[1])
 
-    #plt.savefig('data2/heat_map/nyc-' + str(date) + '-' + str(time) + '.png', dpi=100, alpha=True)
-    count += 1
-    if count % 100 == 0:
-        print count
+        ax.set_xlim(min_x, max_x)
+        ax.set_ylim(min_y, max_y)
+        ax.set_aspect(1)
+        plt.tight_layout()
+        fig.set_size_inches(16.76, 16.88)
+        plt.show()
+
+        #plt.savefig('data2/heat_map/nyc-' + str(date) + '-' + str(time) + '.png', dpi=100, alpha=True)
+        count += 1
+        if count % 100 == 0:
+            print count
 
 if __name__ == '__main__':
     main()
     root = tk.Toplevel()
+    root.wm_title("Prediction")
     Uber_figure(root).pack(side="top", fill="y", expand="false")
     root.mainloop()

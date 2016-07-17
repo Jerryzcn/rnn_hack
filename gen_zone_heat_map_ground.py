@@ -157,5 +157,6 @@ def gen_heat_map(m, pickups):
 if __name__ == '__main__':
     main()
     root = tk.Toplevel()
+    root.wm_title("Ground truth")
     Uber_figure(root).pack(side="top", fill="y", expand="false")
     root.mainloop()
