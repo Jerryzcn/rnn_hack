@@ -321,8 +321,8 @@ def ridge_multi_feature():
 
 def lasso_multi_feature():
     # load the 15-minute time slot
-    data_15 = pickle.load(open("/home/jerry/workspace/uber_nyc_data/data/30_unnormalized.p"))
-    slotCount = 48
+    data_15 = pickle.load(open("/home/jerry/workspace/uber_nyc_data/data/15_unnormalized.p"))
+    slotCount = 96
     trainPercentage = 0.5
     # get the sorted order of keys
     print len(data_15.keys())
