@@ -1,13 +1,13 @@
 # Chitesh Tewani
-
+import numpy as np
 import cPickle as pickle
 import math
 from datetime import datetime
 from sklearn import linear_model
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
-def lr_multi_feature2():
 
+def lr_multi_feature2():
     # load the 15-minute time slot
     data_15 = pickle.load(open("../data/60_unnormalized.p"))
     trainPercentage = 0.5
@@ -34,10 +34,10 @@ def lr_multi_feature2():
     train_rmse = 0
     train_mae = 0
     lookbackSlotCount = 3
-    slot_zone = [[0]*zoneCount]
+    slot_zone = [[0] * zoneCount]
     for monthIndex in range(len(days_in_month)):
         days = days_in_month[monthIndex]
-        #trainCount = int(math.ceil(trainPercentage * days))
+        # trainCount = int(math.ceil(trainPercentage * days))
         trainCount = days
         testCount = days - trainCount
         # train
@@ -48,16 +48,16 @@ def lr_multi_feature2():
             dayOfTheMonth = int(date.strftime(dayOfTheMonthFormat))
             dayOfTheWeek = int(date.strftime(dayOfTheWeekFormat))
 
-            #print len(data_15[sorted_dates[count + dayIndex]])
+            # print len(data_15[sorted_dates[count + dayIndex]])
             for slot in range(len(data_15[sorted_dates[count + dayIndex]])):
 
                 inputParams = [dayOfTheMonth, dayOfTheWeek, slot]
                 lookback_slot_zone = slot_zone[-lookbackSlotCount:]
                 lookback_slot_zone = zip(*lookback_slot_zone)
-                lookback_slot_zone = [sum(lookbackSlot)/len(lookbackSlot) for lookbackSlot in lookback_slot_zone]
-                lookback_slot_zone_square = [lookback_slot  ** 2 for lookback_slot in lookback_slot_zone]
+                lookback_slot_zone = [sum(lookbackSlot) / len(lookbackSlot) for lookbackSlot in lookback_slot_zone]
+                lookback_slot_zone_square = [lookback_slot ** 2 for lookback_slot in lookback_slot_zone]
                 lookback_slot_zone_cube = [lookback_slot ** 3 for lookback_slot in lookback_slot_zone]
-                #print lookback_slot_zone
+                # print lookback_slot_zone
                 # train_data[0] => input params && train_data[1] => target params
                 if monthIndex == len(days_in_month) - 1:
                     testData.append(inputParams + lookback_slot_zone + lookback_slot_zone_square
@@ -75,7 +75,7 @@ def lr_multi_feature2():
     print "Training data size", len(trainData), len(trainData[0]), trainData[0], len(trainTargetVariable)
     print "Testing data size", len(testData), len(testTargetVariable)
 
-    #print "Target variable", len(trainTargetVariable), trainTargetVariable[0], data_15['2015-06-30'][95][6]
+    # print "Target variable", len(trainTargetVariable), trainTargetVariable[0], data_15['2015-06-30'][95][6]
     for zone in range(zoneCount):
         # print "Testing LR for zone ", zone
         clf = linear_model.LinearRegression()
@@ -88,7 +88,6 @@ def lr_multi_feature2():
         train_rmse += train_rmse_zone ** 0.5
         train_mae += mean_absolute_error(targetVariable, train_predictedTargetVariable)
 
-
         predictedTargetVariable = clf.predict(testData)
 
         targetVariable = [target[zone] for target in testTargetVariable]
@@ -98,22 +97,22 @@ def lr_multi_feature2():
         mae += mean_absolute_error(targetVariable, predictedTargetVariable)
 
     print "### TRAIN ###"
-    print "Mean Squared Error ", round(train_mse,2), " mean ",round(train_mse / zoneCount,2)
+    print "Mean Squared Error ", round(train_mse, 2), " mean ", round(train_mse / zoneCount, 2)
     print
-    print "Root mean squared error ", round(train_rmse,2), " mean ",round(train_rmse / zoneCount,2)
+    print "Root mean squared error ", round(train_rmse, 2), " mean ", round(train_rmse / zoneCount, 2)
     print
-    print "Mean absolute Error", round(train_mae,2), " mean ",round(train_mae / zoneCount,2)
+    print "Mean absolute Error", round(train_mae, 2), " mean ", round(train_mae / zoneCount, 2)
     print
 
     print "### TEST ###"
-    print "Mean Squared Error ", round(mse,2), " mean ",round(mse/zoneCount,2)
+    print "Mean Squared Error ", round(mse, 2), " mean ", round(mse / zoneCount, 2)
     print
-    print "Root mean squared error ",round(rmse,2), " mean ", round(rmse/zoneCount,2)
+    print "Root mean squared error ", round(rmse, 2), " mean ", round(rmse / zoneCount, 2)
     print
-    print "Mean absolute Error", round(mae,2), " mean ",round(mae/zoneCount,2)
+    print "Mean absolute Error", round(mae, 2), " mean ", round(mae / zoneCount, 2)
+
 
 def lr_multi_feature():
-
     # load the 15-minute time slot
     data_15 = pickle.load(open("../data/15_unnormalized.p"))
     trainPercentage = 0.5
@@ -140,10 +139,10 @@ def lr_multi_feature():
     train_rmse = 0
     train_mae = 0
     lookbackSlotCount = 3
-    slot_zone = [[0]*zoneCount]
+    slot_zone = [[0] * zoneCount]
     for monthIndex in range(len(days_in_month)):
         days = days_in_month[monthIndex]
-        #trainCount = int(math.ceil(trainPercentage * days))
+        # trainCount = int(math.ceil(trainPercentage * days))
         trainCount = days
         testCount = days - trainCount
         # train
@@ -155,14 +154,14 @@ def lr_multi_feature():
             dayOfTheMonth = int(date.strftime(dayOfTheMonthFormat))
             dayOfTheWeek = int(date.strftime(dayOfTheWeekFormat))
 
-            #print len(data_15[sorted_dates[count + dayIndex]])
+            # print len(data_15[sorted_dates[count + dayIndex]])
             for slot in range(len(data_15[sorted_dates[count + dayIndex]])):
 
                 inputParams = [dayOfTheMonth, dayOfTheWeek, slot]
                 lookback_slot_zone = slot_zone[-lookbackSlotCount:]
                 lookback_slot_zone = zip(*lookback_slot_zone)
-                lookback_slot_zone = [sum(lookbackSlot)/len(lookbackSlot) for lookbackSlot in lookback_slot_zone]
-                #print lookback_slot_zone
+                lookback_slot_zone = [sum(lookbackSlot) / len(lookbackSlot) for lookbackSlot in lookback_slot_zone]
+                # print lookback_slot_zone
                 # train_data[0] => input params && train_data[1] => target params
                 if monthIndex == len(days_in_month) - 1:
                     testData.append(inputParams + lookback_slot_zone)
@@ -178,7 +177,7 @@ def lr_multi_feature():
     print "Training data size", len(trainData), len(trainData[0]), trainData[0], len(trainTargetVariable)
     print "Testing data size", len(testData), len(testTargetVariable)
 
-    #print "Target variable", len(trainTargetVariable), trainTargetVariable[0], data_15['2015-06-30'][95][6]
+    # print "Target variable", len(trainTargetVariable), trainTargetVariable[0], data_15['2015-06-30'][95][6]
     for zone in range(zoneCount):
         # print "Testing LR for zone ", zone
         clf = linear_model.LinearRegression()
@@ -191,7 +190,6 @@ def lr_multi_feature():
         train_rmse += train_rmse_zone ** 0.5
         train_mae += mean_absolute_error(targetVariable, train_predictedTargetVariable)
 
-
         predictedTargetVariable = clf.predict(testData)
 
         targetVariable = [target[zone] for target in testTargetVariable]
@@ -201,22 +199,22 @@ def lr_multi_feature():
         mae += mean_absolute_error(targetVariable, predictedTargetVariable)
 
     print "### TRAIN ###"
-    print "Mean Squared Error ", train_mse, " mean ",train_mse / zoneCount
+    print "Mean Squared Error ", train_mse, " mean ", train_mse / zoneCount
     print
-    print "Root mean squared error ", train_rmse, " mean ",train_rmse / zoneCount
+    print "Root mean squared error ", train_rmse, " mean ", train_rmse / zoneCount
     print
-    print "Mean absolute Error", train_mae, " mean ",train_mae / zoneCount
+    print "Mean absolute Error", train_mae, " mean ", train_mae / zoneCount
     print
 
     print "### TEST ###"
-    print "Mean Squared Error ", mse, " mean ",mse/zoneCount
+    print "Mean Squared Error ", mse, " mean ", mse / zoneCount
     print
-    print "Root mean squared error ", " mean ",rmse, rmse/zoneCount
+    print "Root mean squared error ", " mean ", rmse, rmse / zoneCount
     print
-    print "Mean absolute Error", mae, " mean ",mae/zoneCount
+    print "Mean absolute Error", mae, " mean ", mae / zoneCount
+
 
 def ridge_multi_feature():
-
     # load the 15-minute time slot
     data_15 = pickle.load(open("../data/60_unnormalized.p"))
     trainPercentage = 0.5
@@ -237,10 +235,10 @@ def ridge_multi_feature():
     testData = []
     count = 0
     lookbackSlotCount = 3
-    slot_zone = [[0]*zoneCount]
+    slot_zone = [[0] * zoneCount]
     for monthIndex in range(len(days_in_month)):
         days = days_in_month[monthIndex]
-        #trainCount = int(math.ceil(trainPercentage * days))
+        # trainCount = int(math.ceil(trainPercentage * days))
         trainCount = days
         testCount = days - trainCount
         # train
@@ -252,14 +250,14 @@ def ridge_multi_feature():
             dayOfTheMonth = int(date.strftime(dayOfTheMonthFormat))
             dayOfTheWeek = int(date.strftime(dayOfTheWeekFormat))
 
-            #print len(data_15[sorted_dates[count + dayIndex]])
+            # print len(data_15[sorted_dates[count + dayIndex]])
             for slot in range(len(data_15[sorted_dates[count + dayIndex]])):
 
                 inputParams = [dayOfTheMonth, dayOfTheWeek, slot]
                 lookback_slot_zone = slot_zone[-lookbackSlotCount:]
                 lookback_slot_zone = zip(*lookback_slot_zone)
-                lookback_slot_zone = [sum(lookbackSlot)/len(lookbackSlot) for lookbackSlot in lookback_slot_zone]
-                #print lookback_slot_zone
+                lookback_slot_zone = [sum(lookbackSlot) / len(lookbackSlot) for lookbackSlot in lookback_slot_zone]
+                # print lookback_slot_zone
                 # train_data[0] => input params && train_data[1] => target params
                 if monthIndex == len(days_in_month) - 1:
                     testData.append(inputParams + lookback_slot_zone)
@@ -275,8 +273,8 @@ def ridge_multi_feature():
     print "Training data size", len(trainData), len(trainTargetVariable)
     print "Testing data size", len(testData), len(testTargetVariable)
 
-    #print "Target variable", len(trainTargetVariable), trainTargetVariable[0], data_15['2015-06-30'][95][6]
-    alphas = [0.25,0.27,0.325,0.35,0.55,0.6,0.7]
+    # print "Target variable", len(trainTargetVariable), trainTargetVariable[0], data_15['2015-06-30'][95][6]
+    alphas = [0.25, 0.27, 0.325, 0.35, 0.55, 0.6, 0.7]
     for alpha in alphas:
         mse = 0
         rmse = 0
@@ -296,7 +294,6 @@ def ridge_multi_feature():
             train_rmse += train_rmse_zone ** 0.5
             train_mae += mean_absolute_error(targetVariable, train_predictedTargetVariable)
 
-
             predictedTargetVariable = clf.predict(testData)
 
             targetVariable = [target[zone] for target in testTargetVariable]
@@ -307,25 +304,25 @@ def ridge_multi_feature():
 
         print "%%%% ALPHA %%%", alpha
         print "### TRAIN ###"
-        print "Mean Squared Error ", train_mse, " mean ",train_mse / zoneCount
+        print "Mean Squared Error ", train_mse, " mean ", train_mse / zoneCount
         print
-        print "Root mean squared error ", train_rmse, " mean ",train_rmse / zoneCount
+        print "Root mean squared error ", train_rmse, " mean ", train_rmse / zoneCount
         print
-        print "Mean absolute Error", train_mae, " mean ",train_mae / zoneCount
+        print "Mean absolute Error", train_mae, " mean ", train_mae / zoneCount
         print
 
         print "### TEST ###"
-        print "Mean Squared Error ", mse, " mean ",mse/zoneCount
+        print "Mean Squared Error ", mse, " mean ", mse / zoneCount
         print
-        print "Root mean squared error ", " mean ",rmse, rmse/zoneCount
+        print "Root mean squared error ", " mean ", rmse, rmse / zoneCount
         print
-        print "Mean absolute Error", mae, " mean ",mae/zoneCount
+        print "Mean absolute Error", mae, " mean ", mae / zoneCount
+
 
 def lasso_multi_feature():
-
     # load the 15-minute time slot
-    data_15 = pickle.load(open("../data/60_unnormalized.p"))
-    slotCount = 96
+    data_15 = pickle.load(open("/home/jerry/workspace/uber_nyc_data/data/30_unnormalized.p"))
+    slotCount = 48
     trainPercentage = 0.5
     # get the sorted order of keys
     print len(data_15.keys())
@@ -344,10 +341,10 @@ def lasso_multi_feature():
     testData = []
     count = 0
     lookbackSlotCount = 3
-    slot_zone = [[0]*zoneCount]
+    slot_zone = [[0] * zoneCount]
     for monthIndex in range(len(days_in_month)):
         days = days_in_month[monthIndex]
-        #trainCount = int(math.ceil(trainPercentage * days))
+        # trainCount = int(math.ceil(trainPercentage * days))
         trainCount = days
         testCount = days - trainCount
         # train
@@ -359,14 +356,14 @@ def lasso_multi_feature():
             dayOfTheMonth = int(date.strftime(dayOfTheMonthFormat))
             dayOfTheWeek = int(date.strftime(dayOfTheWeekFormat))
 
-            #print len(data_15[sorted_dates[count + dayIndex]])
+            # print len(data_15[sorted_dates[count + dayIndex]])
             for slot in range(len(data_15[sorted_dates[count + dayIndex]])):
 
                 inputParams = [dayOfTheMonth, dayOfTheWeek, slot]
                 lookback_slot_zone = slot_zone[-lookbackSlotCount:]
                 lookback_slot_zone = zip(*lookback_slot_zone)
-                lookback_slot_zone = [sum(lookbackSlot)/len(lookbackSlot) for lookbackSlot in lookback_slot_zone]
-                #print lookback_slot_zone
+                lookback_slot_zone = [sum(lookbackSlot) / len(lookbackSlot) for lookbackSlot in lookback_slot_zone]
+                # print lookback_slot_zone
                 # train_data[0] => input params && train_data[1] => target params
                 if monthIndex == len(days_in_month) - 1:
                     testData.append(inputParams + lookback_slot_zone)
@@ -382,8 +379,8 @@ def lasso_multi_feature():
     print "Training data size", len(trainData), len(trainTargetVariable)
     print "Testing data size", len(testData), len(testTargetVariable)
 
-    #print "Target variable", len(trainTargetVariable), trainTargetVariable[0], data_15['2015-06-30'][95][6]
-    #alphas = [0.25,0.27,0.325,0.35,0.55,0.6,0.7]
+    # print "Target variable", len(trainTargetVariable), trainTargetVariable[0], data_15['2015-06-30'][95][6]
+    # alphas = [0.25,0.27,0.325,0.35,0.55,0.6,0.7]
     alphas = [0.7]
     for alpha in alphas:
         mse = 0
@@ -392,10 +389,14 @@ def lasso_multi_feature():
         train_mse = 0
         train_rmse = 0
         train_mae = 0
-        final_prediction = [[]*slotCount]
-        ground_truth = [[]*slotCount]
+        final_prediction = []
+        ground_truth = []
+        for i in xrange(slotCount * 30):
+            final_prediction.append([])
+            ground_truth.append([])
         for zone in range(zoneCount):
             # print "Testing LR for zone ", zone
+            # clf = linear_model.Lasso(alpha)
             clf = linear_model.Lasso(alpha)
             targetVariable = [target[zone] for target in trainTargetVariable]
             clf.fit(trainData, targetVariable)
@@ -408,12 +409,14 @@ def lasso_multi_feature():
 
             predictedTargetVariable = clf.predict(testData)
 
-            for slotNumber, predict in enumerate(predictedTargetVariable):
+            for slotNumber in xrange(slotCount):
+                predict = predictedTargetVariable[slotNumber]
                 final_prediction[slotNumber].append(predict)
 
             targetVariable = [target[zone] for target in testTargetVariable]
 
-            for slotNumber, expected in enumerate(ground_truth):
+            for slotNumber in xrange(slotCount):
+                expected = targetVariable[slotNumber]
                 ground_truth[slotNumber].append(expected)
 
             rmse_zone = mean_squared_error(targetVariable, predictedTargetVariable)
@@ -421,23 +424,21 @@ def lasso_multi_feature():
             rmse += rmse_zone ** 0.5
             mae += mean_absolute_error(targetVariable, predictedTargetVariable)
 
-
         print "%%%% ALPHA %%%", alpha
         print "### TRAIN ###"
-        print "Mean Squared Error ", train_mse, " mean ",train_mse / zoneCount
+        print "Mean Squared Error ", train_mse, " mean ", train_mse / zoneCount
         print
-        print "Root mean squared error ", train_rmse, " mean ",train_rmse / zoneCount
+        print "Root mean squared error ", train_rmse, " mean ", train_rmse / zoneCount
         print
-        print "Mean absolute Error", train_mae, " mean ",train_mae / zoneCount
+        print "Mean absolute Error", train_mae, " mean ", train_mae / zoneCount
         print
 
         print "### TEST ###"
-        print "Mean Squared Error ", mse, " mean ",mse/zoneCount
+        print "Mean Squared Error ", mse, " mean ", mse / zoneCount
         print
-        print "Root mean squared error ", " mean ",rmse, rmse/zoneCount
+        print "Root mean squared error ", " mean ", rmse, rmse / zoneCount
         print
-        print "Mean absolute Error", mae, " mean ",mae/zoneCount
-
+        print "Mean absolute Error", mae, " mean ", mae / zoneCount
 
         prediction_dates = sorted_dates[-30:]
         iterIndex = 0
@@ -451,11 +452,8 @@ def lasso_multi_feature():
 
                 iterIndex += 1
 
-        with open('/final_prediction.txt') as f:
-            f.writelines(final_prediction)
-
-        with open('/ground_truth.txt') as f:
-            f.writelines(ground_truth)
+    np.savetxt('final_prediction.txt', np.array(final_prediction), delimiter=',', fmt='%s')
+    np.savetxt('ground_truth.txt', np.array(ground_truth), delimiter=',', fmt='%s')
 
 
 def main():
@@ -486,7 +484,7 @@ def main():
     train_mae = 0
     for monthIndex in range(len(days_in_month)):
         days = days_in_month[monthIndex]
-        #trainCount = int(math.ceil(trainPercentage * days))
+        # trainCount = int(math.ceil(trainPercentage * days))
         trainCount = days
         testCount = days - trainCount
         # train
@@ -497,7 +495,7 @@ def main():
             dayOfTheMonth = int(date.strftime(dayOfTheMonthFormat))
             dayOfTheWeek = int(date.strftime(dayOfTheWeekFormat))
 
-            #print len(data_15[sorted_dates[count + dayIndex]])
+            # print len(data_15[sorted_dates[count + dayIndex]])
             for slot in range(len(data_15[sorted_dates[count + dayIndex]])):
 
                 inputParams = [dayOfTheMonth, dayOfTheWeek, slot]
@@ -514,7 +512,7 @@ def main():
     print "Training data size", len(trainData), len(trainTargetVariable)
     print "Testing data size", len(testData), len(testTargetVariable)
 
-    #print "Target variable", len(trainTargetVariable), trainTargetVariable[0], data_15['2015-06-30'][95][6]
+    # print "Target variable", len(trainTargetVariable), trainTargetVariable[0], data_15['2015-06-30'][95][6]
     for zone in range(zoneCount):
         # print "Testing LR for zone ", zone
         clf = linear_model.LinearRegression()
@@ -527,7 +525,6 @@ def main():
         train_rmse += train_rmse_zone ** 0.5
         train_mae += mean_absolute_error(targetVariable, train_predictedTargetVariable)
 
-
         predictedTargetVariable = clf.predict(testData)
 
         targetVariable = [target[zone] for target in testTargetVariable]
@@ -537,23 +534,24 @@ def main():
         mae += mean_absolute_error(targetVariable, predictedTargetVariable)
 
     print "### TRAIN ###"
-    print "Mean Squared Error ", train_mse, " mean ",train_mse / zoneCount
+    print "Mean Squared Error ", train_mse, " mean ", train_mse / zoneCount
     print
-    print "Root mean squared error ", train_rmse, " mean ",train_rmse / zoneCount
+    print "Root mean squared error ", train_rmse, " mean ", train_rmse / zoneCount
     print
-    print "Mean absolute Error", train_mae, " mean ",train_mae / zoneCount
+    print "Mean absolute Error", train_mae, " mean ", train_mae / zoneCount
     print
 
     print "### TEST ###"
-    print "Mean Squared Error ", mse, " mean ",mse/zoneCount
+    print "Mean Squared Error ", mse, " mean ", mse / zoneCount
     print
-    print "Root mean squared error ", " mean ",rmse, rmse/zoneCount
+    print "Root mean squared error ", " mean ", rmse, rmse / zoneCount
     print
-    print "Mean absolute Error", mae, " mean ",mae/zoneCount
+    print "Mean absolute Error", mae, " mean ", mae / zoneCount
+
 
 if __name__ == '__main__':
-    #main()
-    #lr_multi_feature()
-    #lr_multi_feature2()
-    #ridge_multi_feature()
+    # main()
+    # lr_multi_feature()
+    # lr_multi_feature2()
+    # ridge_multi_feature()
     lasso_multi_feature()
