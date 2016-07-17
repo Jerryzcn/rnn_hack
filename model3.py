@@ -28,12 +28,16 @@ class Model:
 
         h_3 = tf.matmul(h_2_drop, W_3) + b_3
 
-        self.y_pred = h_3
+        self.y_pred = tf.nn.softmax(h_3)
+        # self.y_pred = h_3
+        self._cross_entropy = tf.reduce_sum(-tf.reduce_sum(self.y * tf.log(self.y_pred), reduction_indices=[1]))
+        self.cross_entropy = tf.reduce_mean(-tf.reduce_sum(self.y * tf.log(self.y_pred), reduction_indices=[1]))
+        #self.cross_entropy = tf.reduce_mean(tf.square(self.y_pred - self.y))
 
-        self.cross_entropy = tf.reduce_mean(tf.square(self.y_pred - self.y))
-        self._cross_entropy = tf.reduce_sum(tf.square(self.y_pred - self.y))
+        self.train_step = tf.train.AdagradOptimizer(0.01).minimize(self.cross_entropy)
 
-        self.train_step = tf.train.MomentumOptimizer(0.01,0.9).minimize(self.cross_entropy)
+        correct_prediction = tf.equal(tf.argmax(self.y,1), tf.argmax(self.y_pred,1))
+        self.accuracy = tf.reduce_sum(tf.cast(correct_prediction, "float"))
 
         self.sess = tf.Session()
 
@@ -67,18 +71,21 @@ class Model:
     def eva(self, X, Y):
 
         total_loss = 0.0
-        top_10_percentage = 0.0
+        total_acc = 0.0
 
         for i in range(0,len(X), BATCH_SIZE):
                 tail = min(i+BATCH_SIZE, len(X))
                 batch_xs = X[i:tail,:]
                 batch_ys = Y[i:tail,:]
-                loss = self.sess.run(self._cross_entropy, feed_dict={self.x: batch_xs, self.y: batch_ys})
+                loss, acc = self.sess.run([self._cross_entropy, self.accuracy], feed_dict={self.x: batch_xs, self.y: batch_ys})
                 total_loss += loss
+                total_acc += acc
+
 
         total_loss /=float(len(X))
-        print('Evaluation loss: {} Top 10: {}%'.format(total_loss, top_10_percentage))
-        return total_loss, top_10_percentage
+        total_acc = (total_acc*100)/ float(len(X))
+        print('Evaluation loss: {} Top 10: {}%'.format(total_loss, total_acc))
+        return total_loss, total_acc
 
 
     def predict(self, X):
@@ -88,9 +95,9 @@ class Model:
                 batch_xs = X[i:tail,:]
                 y_pred = self.sess.run(self.y_pred, feed_dict={self.x: batch_xs})
                 if rv is None:
-                    rv = y_pred
+                    rv = np.argmax(y_pred, axis=1)
                 else:
-                    rv = np.concatenate((rv, y_pred))
+                    rv = np.concatenate((rv, np.argmax(y_pred, axis=1)))
         return rv
 
 

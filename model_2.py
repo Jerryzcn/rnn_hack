@@ -28,12 +28,13 @@ class Model:
 
         h_3 = tf.matmul(h_2_drop, W_3) + b_3
 
+        # self.y_pred = tf.nn.softmax(h_3)
         self.y_pred = h_3
 
+        # self.cross_entropy = tf.reduce_mean(-tf.reduce_sum(self.y * tf.log(self.y_pred), reduction_indices=[1]))
         self.cross_entropy = tf.reduce_mean(tf.square(self.y_pred - self.y))
-        self._cross_entropy = tf.reduce_sum(tf.square(self.y_pred - self.y))
 
-        self.train_step = tf.train.MomentumOptimizer(0.01,0.9).minimize(self.cross_entropy)
+        self.train_step = tf.train.MomentumOptimizer(109,0.99).minimize(self.cross_entropy)
 
         self.sess = tf.Session()
 
@@ -52,8 +53,8 @@ class Model:
                 tail = min(i+BATCH_SIZE, len(X))
                 batch_xs = X[i:tail,:]
                 batch_ys = Y[i:tail,:]
-                _, loss = self.sess.run([self.train_step, self._cross_entropy], feed_dict={self.x: batch_xs, self.y: batch_ys})
-                total_loss += loss
+                _, loss = self.sess.run([self.train_step, self.cross_entropy], feed_dict={self.x: batch_xs, self.y: batch_ys})
+                total_loss += loss*(tail-i+1)
             total_loss /= float(len(X))
             print('Avg training loss on {}th epoch: {}'.format(iter, total_loss))
             summary_train.log(total_loss)
@@ -73,10 +74,11 @@ class Model:
                 tail = min(i+BATCH_SIZE, len(X))
                 batch_xs = X[i:tail,:]
                 batch_ys = Y[i:tail,:]
-                loss = self.sess.run(self._cross_entropy, feed_dict={self.x: batch_xs, self.y: batch_ys})
-                total_loss += loss
+                y_pred = self.sess.run(self.y_pred, feed_dict={self.x: batch_xs})
+                total_loss += np.sum(np.square(batch_ys-y_pred))
 
         total_loss /=float(len(X))
+        top_10_percentage = (top_10_percentage*100)/ float(len(X))
         print('Evaluation loss: {} Top 10: {}%'.format(total_loss, top_10_percentage))
         return total_loss, top_10_percentage
 
