@@ -16,7 +16,6 @@ from descartes import PolygonPatch
 from PIL import Image, ImageTk
 import os
 import Tkinter as tk
-import math
 
 
 
@@ -42,7 +41,7 @@ def read_file(filePath):
 
     for line in lines:
         line = line.split(',')
-        line = [line[0]] + [int(math.floor(float(x))) for x in line[1:]]
+        line = [line[0]] + [int(x) for x in line[1:]]
         values.append(line)
 
     return values
@@ -63,7 +62,7 @@ def main():
         color='none',
         zorder=2)
 
-    predicted_values = read_file("./predict/final_prediction.txt")
+    predicted_values = read_file("./predict/ground_truth.txt")
 
     #pickups = pickle.load(open('data/30_unnormalized.p', 'rb'))
 
@@ -134,7 +133,7 @@ def gen_heat_map(m, pickups):
             color_map[i] = pickup_map[LOCATIONID_MAP[index]]
         else:
             color_map[i] = pickup_map[index]
-
+    
     ax = fig.add_subplot(111, frame_on=False, xticks=[], yticks=[])
     df_map['patches'] = [PolygonPatch(x, fc='white', ec='grey', lw=.25, alpha=1.0,
                                       zorder=4) for x in df_map['poly']]
