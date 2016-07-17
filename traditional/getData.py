@@ -394,6 +394,7 @@ def lasso_multi_feature():
         for i in xrange(slotCount * 30):
             final_prediction.append([])
             ground_truth.append([])
+        iterIndex = 0
         for zone in range(zoneCount):
             # print "Testing LR for zone ", zone
             # clf = linear_model.Lasso(alpha)
@@ -409,15 +410,15 @@ def lasso_multi_feature():
 
             predictedTargetVariable = clf.predict(testData)
 
-            for slotNumber in xrange(slotCount):
-                predict = predictedTargetVariable[slotNumber]
-                final_prediction[slotNumber].append(predict)
-
             targetVariable = [target[zone] for target in testTargetVariable]
 
-            for slotNumber in xrange(slotCount):
+
+            for slotNumber in xrange(slotCount*30):
+                predict = predictedTargetVariable[slotNumber]
+                final_prediction[slotNumber].append(predict)
                 expected = targetVariable[slotNumber]
                 ground_truth[slotNumber].append(expected)
+                #iterIndex += 1
 
             rmse_zone = mean_squared_error(targetVariable, predictedTargetVariable)
             mse += rmse_zone
@@ -444,11 +445,11 @@ def lasso_multi_feature():
         iterIndex = 0
         for date in prediction_dates:
             for slotNumber in xrange(slotCount):
-                final_prediction[iterIndex].insert(0, date)
                 final_prediction[iterIndex].insert(0, slotNumber)
+                final_prediction[iterIndex].insert(0, date)
 
-                ground_truth[iterIndex].insert(0, date)
                 ground_truth[iterIndex].insert(0, slotNumber)
+                ground_truth[iterIndex].insert(0, date)
 
                 iterIndex += 1
 
